@@ -1,48 +1,35 @@
-package com.koreait.exam.batch_ex_24_04.app.product.entity;
+package com.koreait.exam.batch_ex_24_04.app.product.service;
 
-import com.koreait.exam.batch_ex_24_04.app.base.entity.BaseEntity;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+import com.koreait.exam.batch_ex_24_04.app.product.entity.Product;
+import com.koreait.exam.batch_ex_24_04.app.product.entity.ProductOption;
+import com.koreait.exam.batch_ex_24_04.app.product.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import java.util.List;
 
-import static javax.persistence.FetchType.LAZY;
+@Service
+@RequiredArgsConstructor
+public class ProductService {
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@SuperBuilder
-@ToString(callSuper = true)
-public class ProductOption extends BaseEntity {
-  private String color;
-  private String size;
-  private String displayColor;
-  private String displaySize;
-  private int price;
-  private int wholesalePrice;
+  private final ProductRepository productRepository;
 
-  @ManyToOne(fetch = LAZY)
-  @ToString.Exclude
-  private Product product;
+  public Product create(String name, int salePrice,int wholesalePrice, String makerShopName, List<ProductOption> options) {
+    int price = (int) Math.ceil(wholesalePrice * 1.6) / 100 * 100;
 
-  private boolean isSoldOut; // 사입처에서의 품절여부
-  private int stockQuantity; // 쇼핑몰에서 보유한 물건 갯수
+    Product product = Product.builder()
+        .name(name)
+        .salePrice(salePrice) // 판매가
+        .price(price) // 권장 소비자가
+        .wholesalePrice(wholesalePrice)
+        .makerShopName(makerShopName).build();
 
-  public ProductOption(String color, String size) {
-    this.color = color; // 네이비
-    this.displayColor = color; // 곤색
-    this.size = size;
-    this.displaySize = size;
-  }
+    for(ProductOption option : options) {
+      product.addOption(option);
+    }
 
-  public boolean isOrderable(int quantity) {
-    if(isSoldOut() == false) return true;
+    productRepository.save(product);
 
-    return getStockQuantity() >= quantity;
+    return product;
   }
 }
