@@ -22,7 +22,6 @@ public class ProductService {
         .price(price)
         .makerShopName(makerShopName).build();
 
-    productRepository.save(product);
 
     for(ProductOption option : options) {
       product.addOption(option);
