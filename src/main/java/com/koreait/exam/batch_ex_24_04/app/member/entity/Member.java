@@ -19,4 +19,5 @@ public class Member extends BaseEntity {
   private String username;
   private String password;
   private String email;
+  private long restCash;
 }

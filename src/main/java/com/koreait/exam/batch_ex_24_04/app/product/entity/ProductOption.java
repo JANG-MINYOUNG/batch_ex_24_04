@@ -19,6 +19,10 @@ import static javax.persistence.FetchType.LAZY;
 @SuperBuilder
 @ToString(callSuper = true)
 public class ProductOption extends BaseEntity {
+  private String color;
+  private String size;
+  private String displayColor;
+  private String displaySize;
   private int price; // 권장 판매가 53000
   private int salePrice; // 실제 판매가 39800
   private int wholesalePrice; // 도매가 < 53000
